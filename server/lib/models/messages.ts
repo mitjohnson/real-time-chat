@@ -1,8 +1,8 @@
 import type { DatabaseSync } from 'node:sqlite'
-import type { MessageModel, Message } from '../../../types/index.ts';
+import type { MessageModel, Message, RawMessageRow } from '../../../types/index.ts';
 
 export function MessageModelFactory(db: DatabaseSync): MessageModel {
-  function deserializeMessage(row: any): Message | null {
+  function deserializeMessage(row: RawMessageRow): Message | null {
     if (!row) return null;
     return {
       id: row.id,
@@ -24,7 +24,10 @@ export function MessageModelFactory(db: DatabaseSync): MessageModel {
       `).run(roomId, content, timestamp);
       
       if (result.changes === 0) throw new Error('Failed to create message');
-      return deserializeMessage(db.prepare('SELECT * FROM messages WHERE id = ?').get(result.lastInsertRowid));
+      return deserializeMessage(
+        db.prepare('SELECT * FROM messages WHERE id = ?')
+          .get(result.lastInsertRowid) as RawMessageRow
+      );
     },
     findByRoomId: (roomId: string, limit = 50) => {
       const rows = db.prepare(`
@@ -32,7 +35,7 @@ export function MessageModelFactory(db: DatabaseSync): MessageModel {
         WHERE room_id = ? 
         ORDER BY timestamp ASC 
         LIMIT ?
-      `).all(roomId, limit);
+      `).all(roomId, limit) as RawMessageRow[];
       return rows.map(deserializeMessage).filter((msg): msg is Message => msg !== null);
     }
   }
