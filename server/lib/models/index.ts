@@ -1,5 +1,5 @@
 import { MessageModelFactory } from "./messages.ts";
-import { ChatRoomModel } from "./chatRoom.ts";
+import { ChatRoomModel } from "./chatroom.ts";
 import type { DatabaseSync } from 'node:sqlite';
 import type { Models } from "../../../types/index.ts";
 
