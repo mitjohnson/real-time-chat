@@ -55,7 +55,7 @@ function ChatRoom({ roomId }: { roomId: string }) {
       message.roomId = roomId 
       emit('chat:message', { ...message });
     }
-    inputRef.current ? (inputRef.current.value = '') : null;
+    if (inputRef.current) inputRef.current.value = '';
   };
   
   const handleKeydown = (event: React.KeyboardEvent) => {
