@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useSocket } from './chatroom.hooks.ts'
 
 import type { Message } from '../../../types'
@@ -7,43 +7,48 @@ import './chatroom.scss'
 
 function ChatRoom({ roomId }: { roomId: string }) {
   const [messages, setMessages] = useState<Message[]>([]);
-  const { on, emit } = useSocket('http://10.5.15.250:3000');
+  const { on, emit } = useSocket(import.meta.env.SOCKET_URL || '');
+  const inputRef = useRef<HTMLInputElement>(null);
   
   useEffect(() => {
     emit('chat:join', { roomId });
 
-    on('chat:history', ({ messages }: { messages: Message[] }) => {
-      const formattedMessages = messages.map((message) => ({
-        content: message.content,
-        timestamp: new Date(message.timestamp),
-        sent: false
-      }));
-      setMessages(formattedMessages);
-    });
-    on('chat:message', (message: any) => {
-      const messageObj: Message = {
-        roomId,
-        content: message?.content,
-        timestamp: new Date(message?.timestamp),
-        sent: false
-      }
-      
-      if (!messageObj.content || !messageObj.timestamp) return;
+    const offHistory = () => {
+      on('chat:history', ({ messages }: { messages: Message[] }) => {
+        const formattedMessages = messages.map((message) => ({
+          content: message.content,
+          timestamp: new Date(message.timestamp),
+          sent: false
+        }));
+        setMessages(formattedMessages);
+      });
+    };
+    
+    const offMessage = () => {
+      on('chat:message', (message: any) => {
+        const messageObj: Message = {
+          roomId,
+          content: message?.content,
+          timestamp: new Date(message?.timestamp),
+          sent: false
+        }
+        
+        if (!messageObj.content || !messageObj.timestamp) return;
 
-      setMessages(prev => [...prev, { ...messageObj }])
-    });
+        setMessages(prev => [...prev, { ...messageObj }])
+      });
+    };
 
     return () => { 
       emit('chat:leave', { roomId });
-      return 
+      offHistory();
+      offMessage();
     }
-  }, [on])
+  }, [on, emit, roomId]);
 
   const sendMessage = () => {
-    const input = document.getElementById('input') as HTMLInputElement
-
     const message: Message= { 
-      content: input.value, 
+      content: inputRef.current?.value ?? '', 
       timestamp: Date.now(),
       sent: true
     }
@@ -52,7 +57,7 @@ function ChatRoom({ roomId }: { roomId: string }) {
       emit('chat:message', { ...message });
       setMessages(prev => [...prev, { ...message, timestamp: new Date(message.timestamp) }])
     }
-    input.value = ''
+    inputRef.current ? (inputRef.current.value = '') : null;
   };
   
   const handleKeydown = (event: React.KeyboardEvent) => {
@@ -73,7 +78,7 @@ function ChatRoom({ roomId }: { roomId: string }) {
       </section>
 
       <section id="input-area">
-        <input onKeyDown={handleKeydown} id="input"/>
+        <input ref={inputRef} onKeyDown={handleKeydown} id="input"/>
         <button onClick={sendMessage}> SEND </button>
       </section>
     </main>
