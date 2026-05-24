@@ -3,7 +3,7 @@ import { useSocket } from './chatroom.hooks.ts'
 
 import type { Message } from '../../../types'
 import MessageComponent from './message'
-import './chatroom.scss'
+import styles from './chatroom.module.scss'
 
 function ChatRoom({ roomId }: { roomId: string }) {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -63,8 +63,8 @@ function ChatRoom({ roomId }: { roomId: string }) {
   };
 
   return ( 
-    <main id="chat">
-      <section id="window">
+    <main className={styles.chat}>
+      <section className={styles.window}>
         {[...messages].map((message) => 
           <MessageComponent 
             content={message.content} 
@@ -75,9 +75,9 @@ function ChatRoom({ roomId }: { roomId: string }) {
         )}
       </section>
 
-      <section id="input-area">
-        <input ref={inputRef} onKeyDown={handleKeydown} id="input"/>
-        <button onClick={sendMessage}> SEND </button>
+      <section className={styles.inputArea}>
+        <input ref={inputRef} onKeyDown={handleKeydown} className={styles.input}/>
+        <button onClick={sendMessage} className={styles.button}> SEND </button>
       </section>
     </main>
   );

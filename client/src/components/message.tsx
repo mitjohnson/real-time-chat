@@ -1,9 +1,9 @@
 import type { Message } from '../types'
-import './message.scss'
+import styles from './message.module.scss'
 
 function Message({ content, timestamp, sent }: Message) {
   return (  
-    <div className={`message ${sent ? 'sent' : 'received'}`}>
+    <div className={`${styles.message} ${sent ? styles.sent : styles.received}`}>
       <p>{content}</p>
       <span>{timestamp.toLocaleTimeString()}</span>
     </div>
