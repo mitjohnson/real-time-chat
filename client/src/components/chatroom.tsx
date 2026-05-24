@@ -7,44 +7,43 @@ import './chatroom.scss'
 
 function ChatRoom({ roomId }: { roomId: string }) {
   const [messages, setMessages] = useState<Message[]>([]);
-  const { on, emit } = useSocket(import.meta.env.SOCKET_URL || '');
+  const {isConnected, on, emit } = useSocket(import.meta.env.VITE_SOCKET_URL || '');
   const inputRef = useRef<HTMLInputElement>(null);
-  
+
   useEffect(() => {
+    if (!isConnected) return;
+
     emit('chat:join', { roomId });
-
-    const offHistory = () => {
-      on('chat:history', ({ messages }: { messages: Message[] }) => {
-        const formattedMessages = messages.map((message) => ({
-          content: message.content,
-          timestamp: new Date(message.timestamp),
-          sent: false
-        }));
-        setMessages(formattedMessages);
-      });
-    };
+    const offHistory = on('chat:history', ({ messages }: { messages: Message[] }) => {
+      const formattedMessages: Message[] = messages.map((message) => ({
+        id: Number(message.id),
+        roomId: message.roomId,
+        content: message.content,
+        timestamp: new Date(message.timestamp),
+        sent: false
+      }));
+      setMessages(formattedMessages);
+    });
     
-    const offMessage = () => {
-      on('chat:message', (message: any) => {
-        const messageObj: Message = {
-          roomId,
-          content: message?.content,
-          timestamp: new Date(message?.timestamp),
-          sent: false
-        }
-        
-        if (!messageObj.content || !messageObj.timestamp) return;
+    const offMessage = on('chat:message', (message: Message) => {
+      const messageObj: Message = {
+        id: Number(message.id),
+        roomId: message.roomId,
+        content: message?.content,
+        timestamp: new Date(message?.timestamp),
+        sent: false
+      }
+      if (!messageObj.content || !messageObj.timestamp) return;
 
-        setMessages(prev => [...prev, { ...messageObj }])
-      });
-    };
+      setMessages(prev => [...prev, { ...messageObj }])
+    });
 
     return () => { 
       emit('chat:leave', { roomId });
       offHistory();
       offMessage();
     }
-  }, [on, emit, roomId]);
+  }, [isConnected, roomId]);
 
   const sendMessage = () => {
     const message: Message= { 
@@ -55,7 +54,6 @@ function ChatRoom({ roomId }: { roomId: string }) {
     if (message.content.trim() !== '') {
       message.roomId = roomId 
       emit('chat:message', { ...message });
-      setMessages(prev => [...prev, { ...message, timestamp: new Date(message.timestamp) }])
     }
     inputRef.current ? (inputRef.current.value = '') : null;
   };
@@ -67,12 +65,12 @@ function ChatRoom({ roomId }: { roomId: string }) {
   return ( 
     <main id="chat">
       <section id="window">
-        {[...messages].reverse().map((message, index) => 
+        {[...messages].reverse().map((message) => 
           <MessageComponent 
             content={message.content} 
             timestamp={message.timestamp} 
             sent={message.sent} 
-            key={index} 
+            key={message.id} 
           />
         )}
       </section>
