@@ -5,6 +5,7 @@ export function MessageModelFactory(db: DatabaseSync): MessageModel {
   function deserializeMessage(row: any): Message | null {
     if (!row) return null;
     return {
+      id: row.id,
       roomId: row.room_id,
       content: row.content,
       timestamp: new Date(row.timestamp),

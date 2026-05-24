@@ -36,8 +36,10 @@ export function chatHandlers(socket: Socket, io: Server, models: Models) {
           sent: false,
         };
         
-        messageModal.create(message);
-        
-        room.send(messageData);
+        const result = messageModal.create(message);
+        if (!result) return console.error('Failed to save message to database');
+
+        console.log(`Message saved to database:`, message);
+        room.send(result);
       });
 };
