@@ -8,8 +8,8 @@ main#chat {
 
   #window {
     display: flex;
-    // justify-content: flex-end;
-    flex-direction: column-reverse;
+    justify-content: flex-end;
+    flex-direction: column;
     overflow-y: auto;
     width: 70%;
     height: 80%;

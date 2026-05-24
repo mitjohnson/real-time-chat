@@ -65,7 +65,7 @@ function ChatRoom({ roomId }: { roomId: string }) {
   return ( 
     <main id="chat">
       <section id="window">
-        {[...messages].reverse().map((message) => 
+        {[...messages].map((message) => 
           <MessageComponent 
             content={message.content} 
             timestamp={message.timestamp} 
