@@ -10,33 +10,43 @@ function treeifyError(error: z.ZodError) {
 
 export function AuthController(authService: AuthService): AuthController {
   return {
-    async register(req: Request, res: Response): Promise<string | any> {
+    async register(req: Request, res: Response): Promise<void> {
       const validate = RegisterSchema.safeParse(req.body);
 
       if (!validate.success) {
-        return res.status(400).json(treeifyError(validate.error));
+        res.status(400).json(treeifyError(validate.error));
+        return
       }
       
-      const token = await authService.register(validate.data!)
-        .catch((error: Error) => {
-          return res.status(401).json({ error: error.message });
-        });
-
-      return res.status(201).json({ token });
+      try {
+        const token = await authService.register(validate.data!)
+        res.status(201).json({ token });
+        return;
+      } catch (error) {
+        error instanceof Error 
+        ? res.status(401).json({ error: error.message })
+        : res.status(500).json({ error: 'Internal server error' });
+        return;
+      }
     },
-    async login(req: Request, res: Response): Promise<string | any>{
+    async login(req: Request, res: Response): Promise<void>{
       const validate = LoginSchema.safeParse(req.body);
       
       if (!validate.success) {
-        return res.status(400).json(treeifyError(validate.error));
+        res.status(400).json(treeifyError(validate.error));
+        return;
       }
 
-      const token = await authService.login(validate.data!)
-        .catch((error: Error) => {
-          return res.status(401).json({ error: error.message });
-        });
-
-      return res.status(200).json({ token });
+      try {
+        const token = await authService.login(validate.data!)
+        res.status(201).json({ token });
+        return;
+      } catch (error) {
+        error instanceof Error 
+        ? res.status(401).json({ error: error.message })
+        : res.status(500).json({ error: 'Internal server error' });
+        return;
+      }
     },
   }
 };
