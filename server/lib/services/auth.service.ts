@@ -1,4 +1,4 @@
-import bccrypt from 'bcrypt';
+import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
 import type { Models } from '../../../types/index.ts';
@@ -20,7 +20,7 @@ export function AuthService(Models: Models) {
       const existingEmail = userModel.findByEmail(email);
       if (existingEmail) throw new Error('Email already exists');
       
-      const hash = await bccrypt.hash(password, 10);
+      const hash = await bcrypt.hash(password, 10);
 
       const user = userModel.create({ name, email, password: hash });
       if (!user) throw new Error('Failed to create user');
@@ -31,7 +31,7 @@ export function AuthService(Models: Models) {
       const user = userModel.findByEmail(email);
       if (!user) throw new Error('Invalid email or password');
       
-      const isValid = await bccrypt.compare(password, user.password!);
+      const isValid = await bcrypt.compare(password, user.password!);
       if (!isValid) throw new Error('Invalid email or password');
 
       return grantToken({ id: user.id!, name: user.name!, email: user.email! });
