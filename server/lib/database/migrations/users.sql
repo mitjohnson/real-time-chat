@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS users (
 );
 
 CREATE TRIGGER IF NOT EXISTS users_updated_at
-AFTER UPDATE ON messages
+AFTER UPDATE ON users
 BEGIN
   UPDATE messages SET updated_at = CURRENT_TIMESTAMP WHERE id = OLD.id;
 END;
