@@ -1,12 +1,13 @@
-CREATE TABLE IF NOT EXISTS messages (
+CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY,
-    room_id TEXT NOT NULL,
-    content TEXT NOT NULL,
+    name TEXT NOT NULL,
+    email TEXT NOT NULL,
+    password TEXT NOT NULL,
     created_at TEXT DEFAULT CURRENT_TIMESTAMP,
     updated_at TEXT DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TRIGGER IF NOT EXISTS messages_updated_at
+CREATE TRIGGER IF NOT EXISTS users_updated_at
 AFTER UPDATE ON messages
 BEGIN
   UPDATE messages SET updated_at = CURRENT_TIMESTAMP WHERE id = OLD.id;

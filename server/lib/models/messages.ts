@@ -8,7 +8,7 @@ export function MessageModelFactory(db: DatabaseSync): MessageModel {
       id: row.id,
       roomId: row.room_id,
       content: row.content,
-      timestamp: new Date(row.timestamp),
+      timestamp: new Date(row.updated_at),
       sent: false
     }; 
   };

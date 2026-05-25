@@ -1,4 +1,4 @@
-import type { Message } from './index.ts';
+import type { Message, User } from './index.ts';
 import type { Socket, Server } from '../server/node_modules/socket.io/dist/index.d.ts';
 
 export interface MessageModel {
@@ -14,7 +14,14 @@ export interface ChatRoomModel {
   }
 };
 
+export interface UserModel {
+  findById(userId: number): User | null;
+  findByEmail(email: string): User | null;
+  create({ name, email, password }: { name: string | null, email: string, password: string }): User | null;
+}
+
 export interface Models {
+  userModel: UserModel;
   messageModel: MessageModel;
   chatRoomModel: ChatRoomModel;
 }
