@@ -14,7 +14,7 @@ export function UserModelFactory(db: DatabaseSync): UserModel {
   };
 
   return {
-    create({ name = null, email, password }: { name: string | null, email: string, password: string }): User | null {
+    create({ name, email, password }: { name: string | null, email: string, password: string }): User | null {
       if (!email || !password) throw new Error("Username, Email, and password are required");
       
       const result = db.prepare(`
