@@ -31,7 +31,7 @@ export function AuthService(Models: Models) {
       const user = userModel.findByEmail(email);
       if (!user) throw new Error('Invalid email or password');
       
-      const isValid = bccrypt.compare(password, user.password!);
+      const isValid = await bccrypt.compare(password, user.password!);
       if (!isValid) throw new Error('Invalid email or password');
 
       return grantToken({ id: user.id!, name: user.name!, email: user.email! });
