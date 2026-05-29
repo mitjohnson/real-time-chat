@@ -18,5 +18,13 @@ export default defineConfig([
     languageOptions: {
       globals: globals.browser,
     },
+    rules: {
+      'prefer-const': true,
+      'no-console': 'warn',
+      'no-else-return': 'warn',
+      'no-invalid-this': 'warn',
+      'no-magic-numbers': 'warn',
+      'require-await': 'warn',
+    },
   },
 ])
