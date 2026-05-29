@@ -9,19 +9,18 @@ export function MessageModelFactory(db: DatabaseSync): MessageModel {
       roomId: row.room_id,
       content: row.content,
       timestamp: new Date(row.updated_at),
-      sent: false
+      sentBy: row.sent_by
     }; 
   };
 
   return {
-    create: ({ roomId, content, timestamp }): Message | null => {
+    create: ({ roomId, content }): Message | null => {
       if (!roomId) throw new Error('roomId is required');
-      if (timestamp instanceof Date) timestamp = timestamp.getTime();
 
       const result = db.prepare(`
-        INSERT INTO messages (room_id, content, timestamp)
-        VALUES (?, ?, ?)
-      `).run(roomId, content, timestamp);
+        INSERT INTO messages (room_id, content)
+        VALUES (?, ?)
+      `).run(roomId, content);
       
       if (result.changes === 0) throw new Error('Failed to create message');
       return deserializeMessage(
@@ -33,7 +32,7 @@ export function MessageModelFactory(db: DatabaseSync): MessageModel {
       const rows = db.prepare(`
         SELECT * FROM messages 
         WHERE room_id = ? 
-        ORDER BY timestamp ASC 
+        ORDER BY updated_at ASC 
         LIMIT ?
       `).all(roomId, limit) as RawMessageRow[];
       return rows.map(deserializeMessage).filter((msg): msg is Message => msg !== null);

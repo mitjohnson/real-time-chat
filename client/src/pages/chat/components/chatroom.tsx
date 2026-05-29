@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from 'react'
-import { useSocket } from './chatroom.hooks.ts'
+import { useSocket } from '@pages/chat/hooks/chatroom.hooks'
 
-import type { Message } from '../../../types'
+import type { Message } from '@types/index'
+import { formatMessage } from '@lib/utils'
 import MessageComponent from './message'
-import styles from './chatroom.module.scss'
 
 function ChatRoom({ roomId }: { roomId: string }) {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -15,27 +15,11 @@ function ChatRoom({ roomId }: { roomId: string }) {
 
     emit('chat:join', { roomId });
     const offHistory = on('chat:history', ({ messages }: { messages: Message[] }) => {
-      const formattedMessages: Message[] = messages.map((message) => ({
-        id: Number(message.id),
-        roomId: message.roomId,
-        content: message.content,
-        timestamp: new Date(message.timestamp),
-        sent: false
-      }));
-      setMessages(formattedMessages);
+      setMessages(messages.map(formatMessage));
     });
     
     const offMessage = on('chat:message', (message: Message) => {
-      const messageObj: Message = {
-        id: Number(message.id),
-        roomId: message.roomId,
-        content: message?.content,
-        timestamp: new Date(message?.timestamp),
-        sent: false
-      }
-      if (!messageObj.content || !messageObj.timestamp) return;
-
-      setMessages(prev => [...prev, { ...messageObj }])
+      setMessages(prev => [...prev, { ...formatMessage(message)}]);
     });
 
     return () => { 
@@ -47,12 +31,10 @@ function ChatRoom({ roomId }: { roomId: string }) {
 
   const sendMessage = () => {
     const message: Message= { 
+      roomId: roomId,
       content: inputRef.current?.value ?? '', 
-      timestamp: Date.now(),
-      sent: true
     }
     if (message.content.trim() !== '') {
-      message.roomId = roomId 
       emit('chat:message', { ...message });
     }
     if (inputRef.current) inputRef.current.value = '';
@@ -63,21 +45,21 @@ function ChatRoom({ roomId }: { roomId: string }) {
   };
 
   return ( 
-    <main className={styles.chat}>
-      <section className={styles.window}>
+    <main>
+      <section>
         {[...messages].map((message) => 
           <MessageComponent 
             content={message.content} 
             timestamp={message.timestamp} 
-            sent={message.sent} 
+            sentBy={message.sentBy} 
             key={message.id} 
           />
         )}
       </section>
 
-      <section className={styles.inputArea}>
-        <input ref={inputRef} onKeyDown={handleKeydown} className={styles.input}/>
-        <button onClick={sendMessage} className={styles.button}> SEND </button>
+      <section >
+        <input ref={inputRef} onKeyDown={handleKeydown} />
+        <button onClick={sendMessage} > SEND </button>
       </section>
     </main>
   );

@@ -21,6 +21,19 @@ const io = new Server(server, {
   }
 });
 
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  
+  if (req.method === 'OPTIONS') {
+    res.sendStatus(204);
+    return;
+  }
+  
+  next();
+});
+
 io.use((socket, next) => {
   const token = socket.handshake.auth.token;
   if (!token) return next(new Error("Authentication error: No token provided"));
@@ -34,6 +47,7 @@ io.use((socket, next) => {
   }
 });
 
+
 app.use(express.json());
 
 const db = database();
@@ -41,6 +55,11 @@ const models = Models(db);
 const services = Services(models);
 
 app.use('/api/v1/auth', authRoutes(services.authService));
+
+io.on('connection', (socket) => {
+  console.log(`User connected: ${socket.id}`);
+  chatHandlers(socket, io, models);
+});
 
 if (!process.env.JWT_SECRET) throw new Error("JWT_SECRET environment variable is not set");
 server.listen(3000, () => console.log("Server is running on port 3000"));

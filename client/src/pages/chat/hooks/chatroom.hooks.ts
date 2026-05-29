@@ -1,13 +1,15 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { io } from 'socket.io-client'
 import type { Socket } from 'socket.io-client';
+import { useAuthStore } from '@store/auth.store';
 
 export function useSocket(url: string) {
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const socketRef = useRef<Socket | null>(null);
+  const { token } = useAuthStore.getState();
 
   useEffect(() => {
-    const socket = io(url);
+    const socket = io(url, { auth: { token } });
     socketRef.current = socket;
 
     socket.on('connect', () => setIsConnected(true));
