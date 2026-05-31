@@ -10,7 +10,9 @@
       "@lib/*": ["./src/lib/*"],
       "@store/*": ["./src/store/*"],
       "@pages/*": ["./src/pages/*"],
-      "@types/*": ["../types/*"]
+      "@src/*": ["./src/*"],
+      "@sharedTypes": ["../types/index.ts"],
+      "@types": ["./src/lib/types/index.ts"]
     },
 
     /* Bundler mode */

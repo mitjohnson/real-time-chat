@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import type { Message } from '@types/index'
+import type { Message } from '@sharedTypes'
 import { useAuthStore } from '@store/auth.store'
 
 function Message({ content, timestamp, sentBy }: Message) {

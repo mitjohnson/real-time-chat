@@ -40,8 +40,8 @@ export default function LoginForm({ onSwitch }: { onSwitch: () => void }) {
     <form noValidate onSubmit={handleSubmit} className='space-y-6'>
       <fieldset className='m-0 space-y-4 border-none p-0'>
         <legend className='sr-only'> Login to your account </legend>
-        <Field label='Email' type='email' ref={emailRef} />
-        <Field label='Password' type='password' ref={passwordRef} />
+        <Field id="LoginEmail" label='Email' type='email' ref={emailRef} placeholder="you@example.com" />
+        <Field id="LoginPassword" label='Password' type='password' ref={passwordRef} placeholder="" />
       </fieldset>
 
       <button

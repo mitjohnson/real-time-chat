@@ -1,8 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useSocket } from '@pages/chat/hooks/chatroom.hooks'
 
-import type { Message } from '@types/index'
-import { formatMessage } from '@lib/utils'
+import type { Message, createMessageDTO } from '@sharedTypes'
 import MessageComponent from '@pages/chat/components/message'
 
 function ChatRoom({ roomId }: { roomId: string }) {
@@ -19,12 +18,12 @@ function ChatRoom({ roomId }: { roomId: string }) {
     const offHistory = on(
       'chat:history',
       ({ messages }: { messages: Message[] }) => {
-        setMessages(messages.map(formatMessage))
+        setMessages(messages.map(message => message))
       }
     )
 
     const offMessage = on('chat:message', (message: Message) => {
-      setMessages(prev => [...prev, { ...formatMessage(message) }])
+      setMessages(prev => [...prev, message])
     })
 
     return () => {
@@ -35,12 +34,12 @@ function ChatRoom({ roomId }: { roomId: string }) {
   }, [isConnected, roomId])
 
   const sendMessage = () => {
-    const message: Message = {
+    const message: createMessageDTO = {
       roomId: roomId,
       content: inputRef.current?.value ?? '',
     }
     if (message.content.trim() !== '') {
-      emit('chat:message', { ...message })
+      emit('chat:message', message)
     }
     if (inputRef.current) inputRef.current.value = ''
   }

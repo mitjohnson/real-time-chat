@@ -1,5 +1,5 @@
 import type { Socket, Server } from "socket.io";
-import type { Message } from "../../../types/index.ts";
+import type { Message } from "@sharedTypes";
 
 export function ChatRoomModel() {
   return {

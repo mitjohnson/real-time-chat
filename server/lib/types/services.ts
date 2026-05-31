@@ -1,4 +1,4 @@
-import type { RegisterDto, LoginDto } from '../server/lib/schemas/auth.schema.ts';
+import type { RegisterDto, LoginDto } from '../schemas/auth.schema.ts';
 
 export interface AuthService {
   register: ({ name, email, password }: RegisterDto) => Promise<string>;

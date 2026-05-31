@@ -1,5 +1,6 @@
 import type { DatabaseSync } from 'node:sqlite'
-import type { MessageModel, Message, RawMessageRow } from '../../../types/index.ts';
+import type { MessageModel, RawMessageRow } from '@types';
+import type { createMessageDTO, Message } from '@sharedTypes';
 
 export function MessageModelFactory(db: DatabaseSync): MessageModel {
   function deserializeMessage(row: RawMessageRow): Message | null {
@@ -8,13 +9,13 @@ export function MessageModelFactory(db: DatabaseSync): MessageModel {
       id: row.id,
       roomId: row.room_id,
       content: row.content,
-      timestamp: new Date(row.updated_at),
+      timestamp: new Date(row.updated_at).getTime(),
       sentBy: row.sent_by
     }; 
   };
 
   return {
-    create: ({ roomId, content, sentBy }): Message | null => {
+    create: ({ roomId, content, sentBy }: createMessageDTO) => {
       if (!roomId || !content || !sentBy) throw new Error('Message Create: missing required fields');
       if (content.trim() === '') throw new Error('Message content cannot be empty');
       if (typeof sentBy !== 'number') throw new Error('sentBy must be a user ID (number)');

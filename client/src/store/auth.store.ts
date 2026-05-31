@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { jwtDecode } from 'jwt-decode';
-import type { AuthState } from '../../../types';
+import type { AuthState } from '@types';
 
 const storedToken = localStorage.getItem('token');
 

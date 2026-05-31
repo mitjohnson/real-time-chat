@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "node --env-file=.env index.ts",
+    "dev": "tsx --env-file=.env --watch index.ts",
     "debug": "node --env-file=.env --inspect-wait index.ts"
   },
   "keywords": [],
@@ -24,6 +24,7 @@
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^25.9.1",
     "@types/socket.io": "^3.0.1",
+    "tsx": "^4.22.3",
     "typescript": "^6.0.3"
   }
 }

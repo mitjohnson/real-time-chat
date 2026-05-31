@@ -1,6 +1,6 @@
 import { z } from "zod";
 import type { Request, Response } from "express";
-import type { AuthService, AuthController } from "../../../types/index.ts";
+import type { AuthService, AuthController } from "@types";
 
 import { LoginSchema, RegisterSchema } from "../schemas/auth.schema.ts";
 

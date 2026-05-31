@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
-import type { Models } from '../../../types/index.ts';
+import type { Models } from '@types';
 import type { RegisterDto, LoginDto } from '../schemas/auth.schema.ts';
 
 export function AuthService(Models: Models) {
@@ -17,7 +17,7 @@ export function AuthService(Models: Models) {
 
   return {
     async register({ name, email, password }: RegisterDto): Promise<string> {
-      const existingEmail = userModel.findByEmail(email);
+      const existingEmail = userModel.findByEmail({ email, raw: false });
       if (existingEmail) throw new Error('Email already exists');
       
       const hash = await bcrypt.hash(password, 10);
@@ -25,16 +25,16 @@ export function AuthService(Models: Models) {
       const user = userModel.create({ name, email, password: hash });
       if (!user) throw new Error('Failed to create user');
 
-      return grantToken({ id: user.id!, name: user.name!, email: user.email! });
+      return grantToken(user);
     },
     async login({ email, password }: LoginDto): Promise<string> {
-      const user = userModel.findByEmail(email);
+      const user = userModel.findByEmail({ email, raw: true });
       if (!user) throw new Error('Invalid email or password');
       
-      const isValid = await bcrypt.compare(password, user.password!);
+      const isValid = await bcrypt.compare(password, user.password);
       if (!isValid) throw new Error('Invalid email or password');
 
-      return grantToken({ id: user.id!, name: user.name!, email: user.email! });
+      return grantToken({ id: user.id, name: user.name, email: user.email });
     }
   }
 };

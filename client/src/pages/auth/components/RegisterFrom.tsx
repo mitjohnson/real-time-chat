@@ -44,9 +44,9 @@ export default function RegisterForm({ onSwitch }: { onSwitch: () => void }) {
     <form noValidate onSubmit={handleSubmit} className='space-y-6'>
       <fieldset className='m-0 space-y-4 border-none p-0'>
         <legend className='sr-only'> Create an account </legend>
-        <Field label='Name' type='text' ref={nameRef} />
-        <Field label='Email' type='email' ref={emailRef} />
-        <Field label='Password' type='password' ref={passwordRef} />
+        <Field id="RegisterName" label='Name' type='text' ref={nameRef} placeholder="John" />
+        <Field id="RegisterEmail" label='Email' type='email' ref={emailRef} placeholder="you@example.com"/>
+        <Field id="RegisterPassword" label='Password' type='password' ref={passwordRef} placeholder=""/>
       </fieldset>
 
       <button
