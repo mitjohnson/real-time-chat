@@ -1,5 +1,5 @@
 import type { Server, Socket } from "socket.io";
-import type { Message, User, createMessageDTO } from '@sharedTypes';
+import type { createMessageDTO } from '@sharedTypes';
 import type { Models } from "@types";
   
 export function chatHandlers(socket: Socket, io: Server, models: Models) {

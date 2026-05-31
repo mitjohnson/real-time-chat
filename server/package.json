@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "tsx --env-file=.env --watch index.ts",
-    "debug": "node --env-file=.env --inspect-wait index.ts"
+    "debug": "tsx --env-file=.env --inspect-wait index.ts"
   },
   "keywords": [],
   "author": "",

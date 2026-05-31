@@ -20,8 +20,8 @@ export interface UserModel {
   findById(args: { id: number, raw?: false }): User | null;
   findById(args: { id: number, raw?: boolean }): User | RawUserRow | null;
   findByEmail({ email, raw }: { email: string, raw: true }): RawUserRow | null;
-  findByEmail({ email, raw }: { email: string, raw?: false }): User | null;
-  findByEmail({ email, raw }: { email: string, raw?: boolean }): User | null;
+  findByEmail({ email, raw }: { email: string, raw: false }): User | null;
+  findByEmail({ email, raw }: { email: string, raw?: boolean }): User | RawUserRow | null;
   create({ name, email, password }: { name: string | null, email: string, password: string }): User | null;
 }
 
