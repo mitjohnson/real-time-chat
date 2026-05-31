@@ -2,7 +2,7 @@ CREATE TABLE IF NOT EXISTS messages (
     id INTEGER PRIMARY KEY,
     room_id TEXT NOT NULL,
     content TEXT NOT NULL,
-    sentBy TEXT NOT NULL,
+    sent_by INTEGER NOT NULL,
     created_at TEXT DEFAULT CURRENT_TIMESTAMP,
     updated_at TEXT DEFAULT CURRENT_TIMESTAMP
 );

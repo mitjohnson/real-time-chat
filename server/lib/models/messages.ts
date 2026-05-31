@@ -14,13 +14,15 @@ export function MessageModelFactory(db: DatabaseSync): MessageModel {
   };
 
   return {
-    create: ({ roomId, content }): Message | null => {
-      if (!roomId) throw new Error('roomId is required');
+    create: ({ roomId, content, sentBy }): Message | null => {
+      if (!roomId || !content || !sentBy) throw new Error('Message Create: missing required fields');
+      if (content.trim() === '') throw new Error('Message content cannot be empty');
+      if (typeof sentBy !== 'number') throw new Error('sentBy must be a user ID (number)');
 
       const result = db.prepare(`
-        INSERT INTO messages (room_id, content)
-        VALUES (?, ?)
-      `).run(roomId, content);
+        INSERT INTO messages (room_id, content, sent_by)
+        VALUES (?, ?, ?)
+      `).run(roomId, content, sentBy);
       
       if (result.changes === 0) throw new Error('Failed to create message');
       return deserializeMessage(
