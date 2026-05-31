@@ -1,7 +1,8 @@
 import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom'
 
 import AuthTabs from '@pages/auth/Auth.tsx'
-import Chat from '@pages/chat/chat.tsx'
+import Chat from '@pages/chat/chatroom.tsx'
+import Shell from '@src/shell/shell.tsx'
 
 function ProtectedRoute() {
   const token = localStorage.getItem('token')
@@ -17,5 +18,18 @@ function LoginRedirect() {
 
 export const router = createBrowserRouter([
   { path: '/login', element: <LoginRedirect />, children: [{ path: '/login', element: <AuthTabs /> }] },
-  { element: <ProtectedRoute />, children: [{ path: '/', element: <Chat /> }] },
+  {
+    element: <ProtectedRoute />,
+    children: [
+      { 
+        element: <Shell />, 
+        children: [
+          { 
+            path: '/', 
+            element: <Chat roomId='general' /> 
+          }
+        ] 
+      }
+    ],
+  },
 ])
