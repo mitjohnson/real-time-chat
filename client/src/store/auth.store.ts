@@ -2,13 +2,14 @@ import { create } from 'zustand';
 import { jwtDecode } from 'jwt-decode';
 import type { AuthState } from '../../../types';
 
+const storedToken = localStorage.getItem('token');
+
 export const useAuthStore = create<AuthState>((set) => ({
-  token: localStorage.getItem('token') || null,
-  user: null,
+  token: storedToken,
+  user: storedToken ? (jwtDecode(storedToken) as AuthState['user']) : null,
   login: (token: string) => {
     localStorage.setItem('token', token);
-    set({ user: jwtDecode(token) as AuthState['user'] });
-    set({ token });
+    set({ token, user: jwtDecode(token) as AuthState['user'] });
   },
   logout: () => {
     localStorage.removeItem('token');
