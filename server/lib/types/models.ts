@@ -1,10 +1,10 @@
 import type { RawUserRow } from './index.ts';
-import type { Message, createMessageDTO, User } from '@sharedTypes';
+import type { Message, CreateMessageDTO, User } from '@sharedTypes';
 import type { Socket, Server } from 'socket.io';
 
 export interface MessageModel {
     findByRoomId(roomId: string, limit: number): Message[];
-    create(message: createMessageDTO): Message | null;
+    create(message: CreateMessageDTO & { sentBy: number }): Message | null;
 }
 
 export interface ChatRoomModel {

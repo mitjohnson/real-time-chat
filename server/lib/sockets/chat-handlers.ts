@@ -1,5 +1,5 @@
 import type { Server, Socket } from "socket.io";
-import type { createMessageDTO } from '@sharedTypes';
+import type { CreateMessageDTO } from '@sharedTypes';
 import type { Models } from "@types";
   
 export function chatHandlers(socket: Socket, io: Server, models: Models) {
@@ -19,7 +19,7 @@ export function chatHandlers(socket: Socket, io: Server, models: Models) {
         room.leave(socket);
       });
 
-      socket.on('chat:message', ({ roomId, content, sentBy = null }: createMessageDTO) => {
+      socket.on('chat:message', ({ roomId, content, sentBy }: CreateMessageDTO & { sentBy: unknown }) => {
         if (!roomId || !content) {
           console.error('Received invalid chat:message data:', { roomId, content });
           socket.emit('error', { message: 'Missing roomId or content' });
@@ -38,13 +38,7 @@ export function chatHandlers(socket: Socket, io: Server, models: Models) {
           console.warn(`Client attempted to send message with sentBy ${sentBy} that does not match authenticated user ID ${user.id}`);
         };
         
-        const message: createMessageDTO = {
-          roomId,
-          content,
-          sentBy: user.id,
-        };
-        
-        const result = messageModel.create(message);
+        const result = messageModel.create({ roomId, content, sentBy: user.id });
         if (!result) return console.error('Failed to save message to database');
 
         room.send(result);

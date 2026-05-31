@@ -1,7 +1,6 @@
-export type createMessageDTO = {
+export type CreateMessageDTO = {
   roomId: string;
   content: string;
-  sentBy?: number | null;
 };
 
 export type Message = {
