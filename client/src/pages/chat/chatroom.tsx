@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useSocket } from '@pages/chat/hooks/chatroom.hooks'
 
-import type { Message, createMessageDTO } from '@sharedTypes'
+import type { Message, CreateMessageDTO } from '@sharedTypes'
 import MessageComponent from '@pages/chat/components/message'
 
 function ChatRoom({ roomId }: { roomId: string }) {
@@ -34,7 +34,7 @@ function ChatRoom({ roomId }: { roomId: string }) {
   }, [isConnected, roomId])
 
   const sendMessage = () => {
-    const message: createMessageDTO = {
+    const message: CreateMessageDTO = {
       roomId: roomId,
       content: inputRef.current?.value ?? '',
     }
@@ -49,32 +49,28 @@ function ChatRoom({ roomId }: { roomId: string }) {
   }
 
   return (
-  <div className='flex h-full w-full flex-col rounded-lg bg-gray-800 text-white overflow-hidden'>
-    <section className='flex-1 min-h-0 overflow-y-auto p-4 flex flex-col gap-2'>
-      {[...messages].map(message => (
-        <MessageComponent
-          content={message.content}
-          timestamp={message.timestamp}
-          sentBy={message.sentBy}
-          key={message.id}
+    <div className='flex h-full w-full flex-col overflow-hidden rounded-lg bg-gray-800 text-white'>
+      <section className='flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto p-4'>
+        {[...messages].map(message => (
+          <MessageComponent key={message.id} {...message} />
+        ))}
+      </section>
+      <section className='flex shrink-0 gap-2 border-t border-gray-700 p-4'>
+        <input
+          className='flex-1 rounded-lg bg-gray-700 px-4 py-3 text-white placeholder-gray-400 outline-none focus:ring-2 focus:ring-blue-500'
+          ref={inputRef}
+          onKeyDown={handleKeydown}
+          placeholder='Message...'
         />
-      ))}
-    </section>
-    <section className='shrink-0 flex gap-2 p-4 border-t border-gray-700'>
-      <input
-        className='flex-1 rounded-lg bg-gray-700 px-4 py-3 text-white placeholder-gray-400 outline-none focus:ring-2 focus:ring-blue-500'
-        ref={inputRef}
-        onKeyDown={handleKeydown}
-        placeholder='Message...'
-      />
-      <button
-        onClick={sendMessage}
-        className='shrink-0 rounded-lg bg-blue-600 px-5 py-3 font-semibold hover:bg-blue-500 transition-colors'
-      >
-        Send
-      </button>
-    </section>
-  </div>
-)}
+        <button
+          onClick={sendMessage}
+          className='shrink-0 rounded-lg bg-blue-600 px-5 py-3 font-semibold transition-colors hover:bg-blue-500'
+        >
+          Send
+        </button>
+      </section>
+    </div>
+  )
+}
 
 export default ChatRoom
