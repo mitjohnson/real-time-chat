@@ -1,5 +1,7 @@
 import { Outlet } from 'react-router-dom'
 import Sidebar from '@src/shell/components/Sidebar'
+import ModalRoot from '@src/shell/components/ModalRoot'
+import ToastRoot from '@src/components/ToastRoot'
 
 export default function Shell() {
   return (
@@ -8,6 +10,8 @@ export default function Shell() {
       <main className='flex flex-1 min-w-0 overflow-hidden'>
         <Outlet />
       </main>
+      <ModalRoot />
+      <ToastRoot />
     </div>
   )
 }
